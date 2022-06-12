@@ -12,12 +12,10 @@ class GetStarWarsCharacterUseCase(
         return try {
             val characterFromApi = starWarsRepository.getCharactersFromApi(searchName)
             starWarsRepository.saveCharactersInCache(characterFromApi)
-            val markFavoriteCharacters = markFavoriteCharacters(characterFromApi, searchName)
-            markFavoriteCharacters
+            markFavoriteCharacters(characterFromApi, searchName)
         } catch (e: UnknownHostException) {
             val charactersFromCache = starWarsRepository.getCharactersFromCache()
-            val markFavoriteCharactersFromCache = markFavoriteCharacters(charactersFromCache, searchName)
-            markFavoriteCharactersFromCache
+            markFavoriteCharacters(charactersFromCache, searchName)
         }
     }
 
@@ -29,5 +27,17 @@ class GetStarWarsCharacterUseCase(
         listCharactersFromData
             .forEach { character -> character.favorite = charactersFromDao.contains(character) }
         return listCharactersFromData
+    }
+
+    suspend fun addCharacterToFavorite(character: Character){
+        starWarsRepository.saveCharacterInDao(character)
+    }
+
+    suspend fun removeCharacterFromFavorite(character: Character){
+        starWarsRepository.deleteCharacterFromDao(character)
+    }
+
+    suspend fun deleteAllCharacter(){
+        starWarsRepository.deleteCharactersInDao()
     }
 }
