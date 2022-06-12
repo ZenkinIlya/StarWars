@@ -26,6 +26,7 @@ class StarWarsCharacterRepository @Inject constructor(
             starWarsApiService.getCharacters(searchName)
         }
         return if (response.isSuccessful) {
+            //Returns true if code() is in the range [200..300).
             val characterApis = response.body()?.results ?: emptyList()
             val characters = characterApis.map { characterApi ->
                 characterMapper.toDomainCharacter(characterApi)
@@ -34,7 +35,7 @@ class StarWarsCharacterRepository @Inject constructor(
             characters
         } else {
             val errorBody = response.errorBody().toString()
-            Timber.d(errorBody)
+            Timber.e(errorBody)
             emptyList()
         }
     }
