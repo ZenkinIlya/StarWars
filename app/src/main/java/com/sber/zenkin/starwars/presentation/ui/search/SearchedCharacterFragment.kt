@@ -5,15 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
+import com.sber.zenkin.starwars.R
 import com.sber.zenkin.starwars.componentManager
 import com.sber.zenkin.starwars.databinding.FragmentSearchedCharacterBinding
-import com.sber.zenkin.starwars.presentation.ui.save.SavedCharacterViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 class SearchedCharacterFragment : Fragment() {
@@ -26,6 +28,7 @@ class SearchedCharacterFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -41,23 +44,37 @@ class SearchedCharacterFragment : Fragment() {
             this,
             SearchedCharacterViewModelProviderFactory(getStarWarsCharacterUseCase)
         )[SearchedCharacterViewModel::class.java]
-        /*val searchedCharacterViewModel =
-            ViewModelProvider(this)[SearchedCharacterViewModel::class.java]*/
-
-        /*val savedCharacterViewModel =
-            ViewModelProvider(this).get(SavedCharacterViewModel::class.java)*/
 
         _binding = FragmentSearchedCharacterBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textHome
+        val characterAdapter = initAdapter(object : CharacterClickHandler {
+            override fun onClickFavorite(character: Character) {
+                searchedCharacterViewModel.addToFavorite(character)
+            }
+
+            override fun onClickCharacter(character: Character) {
+/*                findNavController().navigate(
+                    R.id.action_listRepositoryFragment_to_repositoryFragment,
+                    bundleOf("character" to character)
+                )*/
+            }
+        })
+
         searchedCharacterViewModel.searchedCharacters.observe(viewLifecycleOwner) {
-            textView.text = it.toString()
+            characterAdapter.characters = it
         }
 
         searchedCharacterViewModel.loadData()
 
-        return root
+        return binding.root
+    }
+
+    private fun initAdapter(characterClickHandler: CharacterClickHandler): CharacterAdapter {
+        val characterAdapter = CharacterAdapter(characterClickHandler)
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewCharacterSearcher.layoutManager = linearLayoutManager
+        binding.recyclerViewCharacterSearcher.adapter = characterAdapter
+        return characterAdapter
     }
 
     override fun onDestroyView() {
