@@ -3,6 +3,9 @@ package com.sber.zenkin.starwars.presentation.ui.search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.starwars.R
@@ -11,17 +14,8 @@ import timber.log.Timber
 
 class CharacterAdapter(
     private val characterClickHandler: CharacterClickHandler,
-) : RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder>(),
+) : PagingDataAdapter<Character, CharacterViewHolder>(CharacterDiffItemCallback),
     View.OnClickListener {
-
-    class CharacterViewHolder(val binding: FragmentCharacterBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
-    var characters: List<Character> = emptyList()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -34,7 +28,7 @@ class CharacterAdapter(
     }
 
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
-        val character = characters[position]
+        val character = getItem(position) ?: return
         with(holder.binding) {
             holder.itemView.tag = character
             favoriteImageView.tag = character
@@ -45,12 +39,14 @@ class CharacterAdapter(
         }
     }
 
-    override fun getItemCount(): Int = characters.size
-
     override fun onClick(view: View) {
         val character = view.tag as Character
         when (view.id) {
             R.id.favorite_image_view -> {
+                (view as ImageView).setImageResource(
+                    if (character.favorite) R.drawable.ic_baseline_favorite_border_24 else
+                        R.drawable.ic_baseline_favorite_24
+                )
                 characterClickHandler.onClickFavorite(character)
             }
             else -> {
@@ -58,4 +54,19 @@ class CharacterAdapter(
             }
         }
     }
+}
+
+class CharacterViewHolder(val binding: FragmentCharacterBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+}
+
+private object CharacterDiffItemCallback : DiffUtil.ItemCallback<Character>() {
+    override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
+        return oldItem.name == newItem.name
+    }
+
+    override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean {
+        return oldItem == newItem
+    }
+
 }

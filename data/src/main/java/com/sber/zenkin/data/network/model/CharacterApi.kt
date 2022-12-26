@@ -1,4 +1,6 @@
-package com.sber.zenkin.data.model.network
+package com.sber.zenkin.data.network.model
+
+import com.sber.zenkin.domain.model.Character
 
 data class CharacterApi(
     val birth_year: String, // 19BBY - Before the Battle of Yavin or After the Battle of Yavin

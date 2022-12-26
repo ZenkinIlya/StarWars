@@ -1,67 +1,67 @@
 package com.sber.zenkin.data.repository
 
-import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.sber.zenkin.data.cache.CharactersCache
-import com.sber.zenkin.data.dao.AppDatabase
-import com.sber.zenkin.data.mappers.CharacterMapper
-import com.sber.zenkin.data.model.network.CharacterApi
+import com.sber.zenkin.data.db.dao.AppDatabase
+import com.sber.zenkin.data.mappers.fromDomainCharacter
+import com.sber.zenkin.data.mappers.toDomainCharacter
+import com.sber.zenkin.data.network.CharacterPagingSource
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.data.network.StarWarsApiService
 import com.sber.zenkin.domain.StarWarsRepository
-import kotlinx.coroutines.flow.emptyFlow
-import timber.log.Timber
+import com.sber.zenkin.domain.common.Resources
+import kotlinx.coroutines.flow.*
+import java.lang.Exception
 import javax.inject.Inject
 
 class StarWarsCharacterRepository @Inject constructor(
     private val starWarsApiService: StarWarsApiService,
     private val appDatabase: AppDatabase,
-    private val characterMapper: CharacterMapper,
     private val charactersCache: CharactersCache
 ) : StarWarsRepository {
 
-    override suspend fun getCharactersFromApi(searchName: String): List<Character> {
-        val response = if (searchName.isBlank()) {
-            starWarsApiService.getCharacters(null)
-        } else {
-            starWarsApiService.getCharacters(searchName)
-        }
-        return if (response.isSuccessful) {
-            //Returns true if code() is in the range [200..300).
-            val characterApis = response.body()?.results ?: emptyList()
-            val characters = characterApis.map { characterApi ->
-                characterMapper.toDomainCharacter(characterApi)
-            }
-            Timber.d(characters.toString())
-            characters
-        } else {
-            val errorBody = response.errorBody().toString()
-            Timber.e(errorBody)
-            emptyList()
-        }
+    override suspend fun getCharactersFromApi(searchName: String): Flow<PagingData<Character>> {
+        return Pager(
+            PagingConfig(pageSize = 1, initialLoadSize = 1),
+            pagingSourceFactory = { CharacterPagingSource(starWarsApiService, searchName) }
+        ).flow
+            //TODO Catch exceptions from PagingSource
+//            .catch { }
     }
 
     override suspend fun getCharactersFromDao(searchName: String): List<Character> {
-        return appDatabase.charactersDao().getCharacters()
-            .map { characterDb -> characterMapper.toDomainCharacter(characterDb) }
+        return try {
+            appDatabase.charactersDao().getCharacters()
+                .map { it.toDomainCharacter() }
+        } catch (e: Exception) {
+            return emptyList()
+        }
     }
 
     override suspend fun saveCharacterInDao(character: Character) {
-        appDatabase.charactersDao().insertCharacter(characterMapper.fromDomainCharacter(character))
+        appDatabase.charactersDao().insertCharacter(character.fromDomainCharacter())
     }
 
     override suspend fun deleteCharacterFromDao(character: Character) {
-        appDatabase.charactersDao().deleteCharacter(characterMapper.fromDomainCharacter(character))
+        appDatabase.charactersDao().deleteCharacter(character.fromDomainCharacter())
     }
 
     override suspend fun deleteCharactersInDao() {
         appDatabase.charactersDao().deleteAllCharacters()
     }
 
-    override suspend fun saveCharactersInCache(listCharacters: List<Character>) {
-        charactersCache.putCharacters(listCharacters)
+    override suspend fun saveCharactersInCache(listCharacters: PagingData<Character>) {
+//        charactersCache.putCharacters(listCharacters)
     }
 
     override suspend fun getCharactersFromCache(): List<Character> {
-        return charactersCache.getCharacters()
+        return try {
+            charactersCache.getCharacters()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }

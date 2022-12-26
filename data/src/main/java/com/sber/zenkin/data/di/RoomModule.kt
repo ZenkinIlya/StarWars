@@ -2,7 +2,7 @@ package com.sber.zenkin.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.sber.zenkin.data.dao.AppDatabase
+import com.sber.zenkin.data.db.dao.AppDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

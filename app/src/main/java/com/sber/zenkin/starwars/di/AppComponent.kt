@@ -9,7 +9,6 @@ import javax.inject.Singleton
     AppModule::class,
     UseCaseModule::class,
     CacheModule::class,
-    MapperModule::class,
     RepositoryModule::class,
     RetrofitModule::class,
     RoomModule::class

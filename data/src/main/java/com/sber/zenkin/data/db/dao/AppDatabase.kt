@@ -1,8 +1,8 @@
-package com.sber.zenkin.data.dao
+package com.sber.zenkin.data.db.dao
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.sber.zenkin.data.model.db.CharacterDb
+import com.sber.zenkin.data.db.model.CharacterDb
 
 @Database(
     version = 1,

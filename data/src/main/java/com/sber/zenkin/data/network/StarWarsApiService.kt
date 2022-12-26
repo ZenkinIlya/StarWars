@@ -1,8 +1,7 @@
 package com.sber.zenkin.data.network
 
-import com.sber.zenkin.data.model.network.CharacterApi
-import com.sber.zenkin.data.model.network.ResponseBody
-import com.sber.zenkin.domain.model.Character
+import com.sber.zenkin.data.network.model.CharacterApi
+import com.sber.zenkin.data.network.model.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,6 +10,8 @@ import retrofit2.http.Query
 interface StarWarsApiService {
 
     /**
+     * https://swapi.dev/api/people?search=Luke&page=2
+     *
      * https://swapi.dev/api/people?search=Luke
      *
      * https://swapi.dev/api/people
@@ -18,7 +19,8 @@ interface StarWarsApiService {
      * */
     @GET("people")
     suspend fun getCharacters(
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("page") page: Int? = null
     ): Response<ResponseBody>
 
     /**

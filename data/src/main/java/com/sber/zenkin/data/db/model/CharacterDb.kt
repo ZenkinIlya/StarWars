@@ -1,4 +1,4 @@
-package com.sber.zenkin.data.model.db
+package com.sber.zenkin.data.db.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded

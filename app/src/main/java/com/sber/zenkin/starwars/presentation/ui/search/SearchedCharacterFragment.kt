@@ -5,30 +5,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
-import com.sber.zenkin.starwars.R
 import com.sber.zenkin.starwars.componentManager
 import com.sber.zenkin.starwars.databinding.FragmentSearchedCharacterBinding
-import timber.log.Timber
+import com.sber.zenkin.starwars.presentation.ui.viewModelCreator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SearchedCharacterFragment : Fragment() {
 
     private var _binding: FragmentSearchedCharacterBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var getStarWarsCharacterUseCase: GetStarWarsCharacterUseCase
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
+    private val searchedCharacterViewModel by viewModelCreator {
+        SearchedCharacterViewModel(
+            getStarWarsCharacterUseCase
+        )
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,33 +43,34 @@ class SearchedCharacterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val searchedCharacterViewModel = ViewModelProvider(
-            this,
-            SearchedCharacterViewModelProviderFactory(getStarWarsCharacterUseCase)
-        )[SearchedCharacterViewModel::class.java]
-
         _binding = FragmentSearchedCharacterBinding.inflate(inflater, container, false)
 
         val characterAdapter = initAdapter(object : CharacterClickHandler {
             override fun onClickFavorite(character: Character) {
-                searchedCharacterViewModel.addToFavorite(character)
+                searchedCharacterViewModel.onClickFavorite(character)
             }
 
-            override fun onClickCharacter(character: Character) {
-/*                findNavController().navigate(
-                    R.id.action_listRepositoryFragment_to_repositoryFragment,
-                    bundleOf("character" to character)
-                )*/
-            }
+            override fun onClickCharacter(character: Character) {}
         })
 
-        searchedCharacterViewModel.searchedCharacters.observe(viewLifecycleOwner) {
-            characterAdapter.characters = it
-        }
-
-        searchedCharacterViewModel.loadData()
+        observeSearchBy()
+        observeCharacters(characterAdapter)
 
         return binding.root
+    }
+
+    private fun observeSearchBy() {
+        binding.search.addTextChangedListener {
+            searchedCharacterViewModel.setSearchBy(it.toString())
+        }
+    }
+
+    private fun observeCharacters(characterAdapter: CharacterAdapter) {
+        lifecycleScope.launch {
+            searchedCharacterViewModel.searchedCharactersFlow.collectLatest { pagingData ->
+                characterAdapter.submitData(pagingData)
+            }
+        }
     }
 
     private fun initAdapter(characterClickHandler: CharacterClickHandler): CharacterAdapter {

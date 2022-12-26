@@ -1,7 +1,7 @@
-package com.sber.zenkin.data.dao
+package com.sber.zenkin.data.db.dao
 
 import androidx.room.*
-import com.sber.zenkin.data.model.db.CharacterDb
+import com.sber.zenkin.data.db.model.CharacterDb
 
 @Dao
 interface CharactersDao {
