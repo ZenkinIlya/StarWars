@@ -8,7 +8,7 @@
     android:layout_margin="10dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    tools:context=".presentation.ui.search.SearchedCharacterFragment">
+    tools:context=".presentation.ui.search.SearchCharacterFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

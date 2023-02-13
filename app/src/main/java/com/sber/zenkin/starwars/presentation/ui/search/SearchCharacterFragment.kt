@@ -7,21 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
 import com.sber.zenkin.starwars.componentManager
-import com.sber.zenkin.starwars.databinding.FragmentSearchedCharacterBinding
+import com.sber.zenkin.starwars.databinding.FragmentSearchCharacterBinding
 import com.sber.zenkin.starwars.presentation.ui.viewModelCreator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SearchedCharacterFragment : Fragment() {
+class SearchCharacterFragment : Fragment() {
 
-    private var _binding: FragmentSearchedCharacterBinding? = null
+    private var _binding: FragmentSearchCharacterBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -43,7 +42,7 @@ class SearchedCharacterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchedCharacterBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchCharacterBinding.inflate(inflater, container, false)
 
         val characterAdapter = initAdapter(object : CharacterClickHandler {
             override fun onClickFavorite(character: Character) {

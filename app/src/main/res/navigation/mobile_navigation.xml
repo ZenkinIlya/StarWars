@@ -3,23 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigationSearch">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.sber.zenkin.starwars.presentation.ui.search.SearchedCharacterFragment"
+        android:id="@+id/navigationSearch"
+        android:name="com.sber.zenkin.starwars.presentation.ui.search.SearchCharacterFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_searched_character" />
+        tools:layout="@layout/fragment_search_character" >
+        <action
+            android:id="@+id/action_navigationSearch_to_detailedCharacterFragment"
+            app:destination="@id/detailedCharacterFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigationSavedCharacters"
         android:name="com.sber.zenkin.starwars.presentation.ui.save.SavedCharacterFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_saved_character" />
+        tools:layout="@layout/fragment_saved_character" >
+        <action
+            android:id="@+id/action_navigationSavedCharacters_to_detailedCharacterFragment"
+            app:destination="@id/detailedCharacterFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.sber.zenkin.starwars.presentation.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/detailedCharacterFragment"
+        android:name="com.sber.zenkin.starwars.DetailedCharacterFragment"
+        android:label="fragment_detailed_character"
+        tools:layout="@layout/fragment_detailed_character" />
+
 </navigation>
