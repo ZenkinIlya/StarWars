@@ -29,21 +29,6 @@ class SearchedCharacterViewModel @Inject constructor(
             .cachedIn(viewModelScope)
     }
 
-/*    fun loadData(searchBy: String){
-        viewModelScope.launch {
-             _searchedCharacters = getStarWarsCharacterUseCase.getCharacters(searchBy).onEach {
-                Timber.tag("viewModel").d(it.toString())
-            }
-                .asLiveData(Dispatchers.IO) as MutableLiveData<PagingData<Character>>
-        }
-    }*/
-
-/*    fun deleteData() {
-        viewModelScope.launch {
-            getStarWarsCharacterUseCase.deleteAllCharacter()
-        }
-    }*/
-
     fun onClickFavorite(character: Character) {
         viewModelScope.launch {
             if (character.favorite) {

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.starwars.R
 import com.sber.zenkin.starwars.databinding.FragmentCharacterBinding
-import timber.log.Timber
 
 class CharacterAdapter(
     private val characterClickHandler: CharacterClickHandler,
@@ -30,8 +29,9 @@ class CharacterAdapter(
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
         val character = getItem(position) ?: return
         with(holder.binding) {
-            holder.itemView.tag = character
-            favoriteImageView.tag = character
+            val characterWrapper = CharacterWrapper(character, position)
+            holder.itemView.tag = characterWrapper
+            favoriteImageView.tag = characterWrapper
 
             CharacterViewHandler.DefaultRepository(this, character)
                 .bindView()
@@ -40,17 +40,15 @@ class CharacterAdapter(
     }
 
     override fun onClick(view: View) {
-        val character = view.tag as Character
+        val characterWrapper = view.tag as CharacterWrapper
         when (view.id) {
             R.id.favorite_image_view -> {
-                (view as ImageView).setImageResource(
-                    if (character.favorite) R.drawable.ic_baseline_favorite_border_24 else
-                        R.drawable.ic_baseline_favorite_24
-                )
-                characterClickHandler.onClickFavorite(character)
+                characterWrapper.character.favorite = !characterWrapper.character.favorite
+                notifyItemChanged(characterWrapper.position)
+                characterClickHandler.onClickFavorite(characterWrapper.character)
             }
             else -> {
-                characterClickHandler.onClickCharacter(character)
+                characterClickHandler.onClickCharacter(characterWrapper.character)
             }
         }
     }
@@ -70,3 +68,5 @@ private object CharacterDiffItemCallback : DiffUtil.ItemCallback<Character>() {
     }
 
 }
+
+class CharacterWrapper(val character: Character, val position: Int)
