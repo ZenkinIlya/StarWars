@@ -8,10 +8,10 @@ class SaveStarWarsCharacterUseCase(
 ) {
 
     suspend fun addCharacterToFavorite(character: Character) {
-        starWarsRepository.saveCharacterInDao(character)
+        starWarsRepository.saveCharacterInDb(character)
     }
 
     suspend fun removeCharacterFromFavorite(character: Character) {
-        starWarsRepository.deleteCharacterFromDao(character)
+        starWarsRepository.deleteCharacterFromDb(character)
     }
 }

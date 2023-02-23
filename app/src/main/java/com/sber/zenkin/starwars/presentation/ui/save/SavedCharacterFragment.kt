@@ -22,16 +22,12 @@ class SavedCharacterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val savedCharacterViewModel =
-            ViewModelProvider(this).get(SavedCharacterViewModel::class.java)
+//        val savedCharacterViewModel =
+//            ViewModelProvider(this).get(SavedCharacterViewModel::class.java)
 
         _binding = FragmentSavedCharacterBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        savedCharacterViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
         return root
     }
 

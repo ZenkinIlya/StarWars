@@ -17,9 +17,9 @@ class CharactersCache(private val sharedPreferences: SharedPreferences) {
             .apply()
     }
 
-    suspend fun putCharacters(listCharacters: List<Character>) {
+    suspend fun putCharacter(character: Character) {
         val gson = Gson()
-        val jsonCharacters = gson.toJson(listCharacters)
+        val jsonCharacters = gson.toJson(character)
         sharedPreferences.edit()
             .putString(CACHE_CHARACTERS, jsonCharacters)
             .apply()

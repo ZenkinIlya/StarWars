@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/detailedCharacterFragment"
-        android:name="com.sber.zenkin.starwars.DetailedCharacterFragment"
+        android:name="com.sber.zenkin.starwars.presentation.ui.detailedCharacter.DetailedCharacterFragment"
         android:label="fragment_detailed_character"
         tools:layout="@layout/fragment_detailed_character" />
 

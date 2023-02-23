@@ -2,6 +2,7 @@ package com.sber.zenkin.data.db.dao
 
 import androidx.room.*
 import com.sber.zenkin.data.db.model.CharacterDb
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CharactersDao {

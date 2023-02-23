@@ -1,13 +1,42 @@
 package com.sber.zenkin.starwars.presentation.ui.save
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.sber.zenkin.domain.model.Character
+import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
+import com.sber.zenkin.domain.useCases.SaveStarWarsCharacterUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 
-class SavedCharacterViewModel : ViewModel() {
+class SavedCharacterViewModel constructor(
+    getStarWarsCharacterUseCase: GetStarWarsCharacterUseCase,
+    saveStarWarsCharacterUseCase: SaveStarWarsCharacterUseCase
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+//    val savedCharactersFlow: Flow<PagingData<Character>>
+
+/*    init {
+        savedCharactersFlow =
+        savedCharactersFlow = searchByLiveData.asFlow()
+            .debounce(500)
+            .flatMapLatest { getStarWarsCharacterUseCase.getCharactersFromDb(it) }
+            .cachedIn(viewModelScope)
     }
-    val text: LiveData<String> = _text
+
+    fun onClickFavorite(character: Character) {
+        viewModelScope.launch {
+            if (character.favorite) {
+                getStarWarsCharacterUseCase.removeCharacterFromFavorite(character)
+            } else {
+                getStarWarsCharacterUseCase.addCharacterToFavorite(character)
+            }
+        }
+    }*/
+
+    fun onClickFavorite() {
+
+    }
 }

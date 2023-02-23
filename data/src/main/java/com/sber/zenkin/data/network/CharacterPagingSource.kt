@@ -4,9 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.sber.zenkin.data.mappers.toDomainCharacter
 import com.sber.zenkin.domain.model.Character
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -24,18 +21,32 @@ class CharacterPagingSource constructor(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
+        Timber.tag("PAGING").d(
+            "[params] key = %s, loadSize = %s, placeHolder = %b",
+            params.key,
+            params.loadSize,
+            params.placeholdersEnabled
+        )
         if (query.isEmpty()) {
             return LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
         }
-
         val pageNumber = params.key ?: 1
+        Timber.tag("PAGING").d("pageNumber = %s", pageNumber)
         val response = starWarsApiService.getCharacters(query, pageNumber)
 
         return if (response.isSuccessful) {
-            val characters = checkNotNull(response.body()).results.map { it.toDomainCharacter() }
-            Timber.tag("PagingSource").d(characters.toString())
-            val nextPageNumber = if (characters.isEmpty()) null else pageNumber + 1
+            val responseBody = checkNotNull(response.body())
+            Timber.tag("PAGING").d("responseBody = %s", responseBody.toString())
+
+            val characters = responseBody.results.map { it.toDomainCharacter() }
+            val nextPageNumber = if (responseBody.next != null) pageNumber + 1 else null
             val prevPageNumber = if (pageNumber > 1) pageNumber - 1 else null
+            Timber.tag("PAGING").d(
+                "next = %d, prev = %d, character = %s",
+                nextPageNumber,
+                prevPageNumber,
+                characters.toString()
+            )
             LoadResult.Page(
                 data = characters,
                 prevKey = prevPageNumber,
