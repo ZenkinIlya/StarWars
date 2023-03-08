@@ -9,9 +9,9 @@ import androidx.paging.cachedIn
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
 import com.sber.zenkin.domain.useCases.SaveStarWarsCharacterUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,7 +47,7 @@ class SearchedCharacterViewModel @Inject constructor(
             .cachedIn(viewModelScope)
     }
 
-    private fun <T> stateFlow(
+/*    private fun <T> stateFlow(
         scope: CoroutineScope,
         initialValue: T,
         producer: (subscriptionCount: StateFlow<Int>) -> Flow<T>
@@ -73,7 +73,7 @@ class SearchedCharacterViewModel @Inject constructor(
                     SharingCommand.STOP_AND_RESET_REPLAY_CACHE -> emptyFlow()
                 }
             }
-    }
+    }*/
 
     fun onClickFavorite(character: Character) {
         viewModelScope.launch {
