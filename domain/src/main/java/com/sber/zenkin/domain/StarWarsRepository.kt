@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface StarWarsRepository {
     suspend fun getCharactersFromApi(searchName: String): Flow<PagingData<Character>>
-    suspend fun getCharactersFromDb(searchName: String = ""): List<Character>
-    suspend fun saveCharacterInDb(character: Character)
-    suspend fun deleteCharacterFromDb(character: Character)
-    suspend fun deleteCharactersInDb()
+    fun getCharactersFromDatabase(searchName: String): List<Character>
+    suspend fun saveCharacterInDatabase(character: Character)
+    suspend fun deleteCharacterFromDatabase(character: Character)
+    suspend fun deleteAllCharactersFromDatabase()
     suspend fun saveCharacterInCache(character: Character)
     suspend fun getCharactersFromCache(): List<Character>
 }
