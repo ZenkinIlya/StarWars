@@ -9,12 +9,15 @@ import androidx.paging.cachedIn
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
 import com.sber.zenkin.domain.useCases.SaveStarWarsCharacterUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SearchedCharacterViewModel @Inject constructor(
     private val getStarWarsCharacterUseCase: GetStarWarsCharacterUseCase,
     private val saveStarWarsCharacterUseCase: SaveStarWarsCharacterUseCase
