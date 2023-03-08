@@ -1,42 +1,52 @@
 package com.sber.zenkin.starwars.presentation.ui.save
 
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.sber.zenkin.domain.model.Character
 import com.sber.zenkin.domain.useCases.GetStarWarsCharacterUseCase
 import com.sber.zenkin.domain.useCases.SaveStarWarsCharacterUseCase
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
 
-class SavedCharacterViewModel constructor(
-    getStarWarsCharacterUseCase: GetStarWarsCharacterUseCase,
-    saveStarWarsCharacterUseCase: SaveStarWarsCharacterUseCase
+class SavedCharacterViewModel @Inject constructor(
+    private val getStarWarsCharacterUseCase: GetStarWarsCharacterUseCase,
+    private val saveStarWarsCharacterUseCase: SaveStarWarsCharacterUseCase
 ) : ViewModel() {
 
-//    val savedCharactersFlow: Flow<PagingData<Character>>
+    private var searchByLiveData = MutableLiveData("")
 
-/*    init {
-        savedCharactersFlow =
-        savedCharactersFlow = searchByLiveData.asFlow()
-            .debounce(500)
-            .flatMapLatest { getStarWarsCharacterUseCase.getCharactersFromDb(it) }
-            .cachedIn(viewModelScope)
-    }
+    @OptIn(FlowPreview::class)
+    val savedCharactersLiveData: LiveData<List<Character>> = searchByLiveData.asFlow()
+        .debounce(500)
+        .asLiveData()
+        .switchMap {
+            //old liveData ignored when new search value comes
+            liveData {
+                val characterFromDatabase = viewModelScope.async(Dispatchers.IO) {
+                    Timber.i("Get saved characters from database by search value: $it")
+                    getStarWarsCharacterUseCase.getCharactersFromDb(it ?: "")
+                }
+                emit(characterFromDatabase.await())
+            }
+        }
 
     fun onClickFavorite(character: Character) {
         viewModelScope.launch {
             if (character.favorite) {
-                getStarWarsCharacterUseCase.removeCharacterFromFavorite(character)
+                Timber.i("Add character to favorite: ${character.name}")
+                saveStarWarsCharacterUseCase.addCharacterToFavorite(character)
             } else {
-                getStarWarsCharacterUseCase.addCharacterToFavorite(character)
+                Timber.i("Remove character from favorite: ${character.name}")
+                saveStarWarsCharacterUseCase.removeCharacterFromFavorite(character)
             }
         }
-    }*/
+    }
 
-    fun onClickFavorite() {
-
+    fun setSearchValue(searchBy: String) {
+        Timber.i("Set search value for saved character list: $searchBy")
+        if (searchByLiveData.value != searchBy) {
+            searchByLiveData.value = searchBy
+        }
     }
 }
