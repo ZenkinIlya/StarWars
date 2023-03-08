@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.map
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sber.zenkin.domain.model.Character
@@ -17,6 +18,7 @@ import com.sber.zenkin.starwars.componentManager
 import com.sber.zenkin.starwars.databinding.FragmentSearchCharacterBinding
 import com.sber.zenkin.starwars.presentation.ui.viewModelCreator
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,7 +33,6 @@ class SearchCharacterFragment : Fragment() {
 
     @Inject
     lateinit var saveStarWarsCharacterUseCase: SaveStarWarsCharacterUseCase
-
 
     private val searchedCharacterViewModel by viewModelCreator {
         SearchedCharacterViewModel(
@@ -57,47 +58,31 @@ class SearchCharacterFragment : Fragment() {
                 searchedCharacterViewModel.onClickFavorite(character)
             }
 
-            override fun onClickCharacter(character: Character) {}
+            override fun onClickCharacter(character: Character) {
+                TODO("realize click character")
+            }
         })
 
-        observeSearchBy()
+        initListeners()
         observeCharacters(characterAdapter)
 
         return binding.root
     }
 
-    private fun observeSearchBy() {
+    private fun initListeners() {
         binding.search.addTextChangedListener {
             searchedCharacterViewModel.setSearchBy(it.toString())
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        Timber.d("onStart()")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.d("onResume()")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.d("onPause()")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.d("onStop()")
-    }
-
     private fun observeCharacters(characterAdapter: CharacterAdapter) {
         lifecycleScope.launch {
-            Timber.d("launch")
-            searchedCharacterViewModel.searchedCharactersFlow.collectLatest { pagingData ->
-                characterAdapter.submitData(pagingData)
-            }
+            Timber.i("launch observe characters")
+            searchedCharacterViewModel.searchedCharactersFlow
+                .onEach { it.map { character -> Timber.d("searched character: $character") } }
+                .collectLatest { pagingData ->
+                    characterAdapter.submitData(pagingData)
+                }
         }
     }
 
