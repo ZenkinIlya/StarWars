@@ -4,7 +4,7 @@ import com.sber.zenkin.data.db.model.CharacterDb
 import com.sber.zenkin.data.network.model.CharacterApi
 import com.sber.zenkin.domain.model.Character
 
-fun CharacterDb.toDomainCharacter() =
+fun CharacterDb.fromDomainCharacter() =
     Character(
         name = name,
         height = height,
@@ -15,10 +15,11 @@ fun CharacterDb.toDomainCharacter() =
         birthYear = birthYear,
         gender = gender,
         homeWorld = homeWorld,
+        //All characters are favorite which converted from CharacterDb
         favorite = true
     )
 
-fun Character.fromDomainCharacter() =
+fun Character.toDomainCharacter() =
     CharacterDb(
         name = name,
         height = height,
@@ -31,7 +32,7 @@ fun Character.fromDomainCharacter() =
         homeWorld = homeWorld
     )
 
-internal fun CharacterApi.toDomainCharacter() =
+internal fun CharacterApi.fromDomainCharacter() =
     Character(
         name = name,
         height = height,
