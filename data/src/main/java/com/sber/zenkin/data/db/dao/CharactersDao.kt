@@ -2,7 +2,6 @@ package com.sber.zenkin.data.db.dao
 
 import androidx.room.*
 import com.sber.zenkin.data.db.model.CharacterDb
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CharactersDao {
@@ -17,6 +16,9 @@ interface CharactersDao {
     suspend fun deleteAllCharacters()
 
     @Query("SELECT * FROM characters")
-    suspend fun getCharacters(): List<CharacterDb>
+    fun getCharacters(): List<CharacterDb>
+
+    @Query("SELECT * FROM characters WHERE name = :searchName")
+    fun getCharactersByName(searchName: String): List<CharacterDb>
 
 }
