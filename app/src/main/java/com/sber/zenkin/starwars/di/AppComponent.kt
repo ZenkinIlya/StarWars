@@ -1,6 +1,7 @@
 package com.sber.zenkin.starwars.di
 
 import com.sber.zenkin.data.di.*
+import com.sber.zenkin.starwars.presentation.ui.save.SavedCharacterFragment
 import com.sber.zenkin.starwars.presentation.ui.search.SearchCharacterFragment
 import dagger.Component
 import javax.inject.Singleton
@@ -17,4 +18,6 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(searchCharacterFragment: SearchCharacterFragment)
+
+    fun inject(savedCharacterFragment: SavedCharacterFragment)
 }
