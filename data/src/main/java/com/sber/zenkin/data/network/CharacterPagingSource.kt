@@ -2,7 +2,7 @@ package com.sber.zenkin.data.network
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.sber.zenkin.data.mappers.toDomainCharacter
+import com.sber.zenkin.data.mappers.fromDomainCharacter
 import com.sber.zenkin.domain.model.Character
 import retrofit2.HttpException
 import timber.log.Timber
@@ -38,7 +38,7 @@ class CharacterPagingSource constructor(
             val responseBody = checkNotNull(response.body())
             Timber.tag("PAGING").d("responseBody = %s", responseBody.toString())
 
-            val characters = responseBody.results.map { it.toDomainCharacter() }
+            val characters = responseBody.results.map { it.fromDomainCharacter() }
             val nextPageNumber = if (responseBody.next != null) pageNumber + 1 else null
             val prevPageNumber = if (pageNumber > 1) pageNumber - 1 else null
             Timber.tag("PAGING").d(
